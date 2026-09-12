@@ -1,0 +1,177 @@
+{
+  "name": "image-diff",
+  "displayName": "Image Diff",
+  "description": "GitHub-style 2-up, swipe, and onion skin image diffs in VS Code.",
+  "version": "0.1.0",
+  "publisher": "ran-maru",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "imageDiff.openFromDiff",
+        "title": "Open Image Diff",
+        "icon": "$(compare-changes)"
+      },
+      {
+        "command": "imageDiff.openStandardDiff",
+        "title": "Open Standard Diff",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "imageDiff.setCompareA",
+        "title": "Image Diff: Set as Before"
+      },
+      {
+        "command": "imageDiff.setCompareB",
+        "title": "Image Diff: Set as After"
+      },
+      {
+        "command": "imageDiff.compareSelected",
+        "title": "Image Diff: Compare Selected Images"
+      },
+      {
+        "command": "imageDiff.refreshChanges",
+        "title": "Image Diff: Refresh Changed Images"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "imageDiff.openStandardDiff",
+          "when": "activeWebviewPanelId == imageDiff.viewer",
+          "group": "navigation"
+        },
+        {
+          "command": "imageDiff.openFromDiff",
+          "when": "isInDiffEditor && resourceExtname =~ /\\.(png|jpe?g|gif|svg)$/i",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "imageDiff.setCompareA",
+          "when": "resourceExtname =~ /\\.(png|jpe?g|gif|svg)$/i",
+          "group": "imageDiff@1"
+        },
+        {
+          "command": "imageDiff.setCompareB",
+          "when": "resourceExtname =~ /\\.(png|jpe?g|gif|svg)$/i",
+          "group": "imageDiff@2"
+        },
+        {
+          "command": "imageDiff.compareSelected",
+          "when": "listMultiSelection && resourceExtname =~ /\\.(png|jpe?g|gif|svg)$/i",
+          "group": "imageDiff@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "imageDiff.openFromDiff",
+          "when": "isInDiffEditor"
+        },
+        {
+          "command": "imageDiff.openStandardDiff",
+          "when": "activeWebviewPanelId == imageDiff.viewer"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "imageDiff",
+          "title": "Image Diff",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "imageDiff": [
+        {
+          "id": "imageDiff.changes",
+          "name": "Changed Images"
+        },
+        {
+          "id": "imageDiff.compare",
+          "name": "Compare",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Image Diff",
+      "properties": {
+        "imageDiff.autoOpenFromScm": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically replace the standard SCM image diff with the Image Diff viewer."
+        },
+        "imageDiff.defaultMode": {
+          "type": "string",
+          "enum": [
+            "2-up",
+            "swipe",
+            "onion-skin"
+          ],
+          "default": "2-up",
+          "description": "Default comparison mode."
+        },
+        "imageDiff.background": {
+          "type": "string",
+          "enum": [
+            "checkerboard",
+            "white",
+            "black"
+          ],
+          "default": "checkerboard",
+          "description": "Default preview background."
+        },
+        "imageDiff.supportedExtensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif",
+            ".svg"
+          ],
+          "description": "File extensions opened by Image Diff."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "pnpm build:ext && pnpm build:webview",
+    "build:ext": "node esbuild.mjs",
+    "build:webview": "vite build",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.webview.json"
+  },
+  "dependencies": {
+    "@image-diff/viewer": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@types/vscode": "^1.85.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "esbuild": "^0.25.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0"
+  }
+}

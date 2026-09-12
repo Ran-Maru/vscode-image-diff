@@ -1,0 +1,10 @@
+src/**
+webview/**
+**/*.ts
+**/*.tsx
+**/*.map
+tsconfig*.json
+esbuild.mjs
+vite.config.ts
+node_modules/**
+!dist/**
