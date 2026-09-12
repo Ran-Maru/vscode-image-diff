@@ -32,9 +32,9 @@ export function ImageDiffViewer({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const stage = useMemo(() => computeStageSize(before, after), [before, after]);
-  const { viewport, fit, reset100, zoomBy } = useViewport(containerRef, stage);
-
   const overlaySupported = Boolean(before && after);
+  const columns = mode === '2-up' || !overlaySupported ? 2 : 1;
+  const { viewport, fit, reset100, zoomBy } = useViewport(containerRef, stage, columns);
 
   useEffect(() => {
     setMode(initialMode);

@@ -11,11 +11,17 @@ export interface ViewportState {
 const MIN_SCALE = 0.1;
 const MAX_SCALE = 16;
 
-export function useViewport(containerRef: RefObject<HTMLElement | null>, content: Size) {
+export function useViewport(
+  containerRef: RefObject<HTMLElement | null>,
+  content: Size,
+  columns = 1,
+) {
   const [viewport, setViewport] = useState<ViewportState>({ scale: 1, x: 0, y: 0 });
   const dragging = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
   const contentRef = useRef(content);
   contentRef.current = content;
+  const columnsRef = useRef(columns);
+  columnsRef.current = columns;
 
   const fit = useCallback(() => {
     const el = containerRef.current;
@@ -23,8 +29,9 @@ export function useViewport(containerRef: RefObject<HTMLElement | null>, content
       return;
     }
     const rect = el.getBoundingClientRect();
-    const scale = fitScale(contentRef.current, { width: rect.width, height: rect.height });
-    const x = (rect.width - contentRef.current.width * scale) / 2;
+    const paneWidth = rect.width / Math.max(1, columnsRef.current);
+    const scale = fitScale(contentRef.current, { width: paneWidth, height: rect.height });
+    const x = (paneWidth - contentRef.current.width * scale) / 2;
     const y = (rect.height - contentRef.current.height * scale) / 2;
     setViewport({ scale: clamp(scale, MIN_SCALE, MAX_SCALE), x, y });
   }, [containerRef]);
@@ -36,9 +43,10 @@ export function useViewport(containerRef: RefObject<HTMLElement | null>, content
       return;
     }
     const rect = el.getBoundingClientRect();
+    const paneWidth = rect.width / Math.max(1, columnsRef.current);
     setViewport({
       scale: 1,
-      x: (rect.width - contentRef.current.width) / 2,
+      x: (paneWidth - contentRef.current.width) / 2,
       y: (rect.height - contentRef.current.height) / 2,
     });
   }, [containerRef]);
@@ -139,7 +147,7 @@ export function useViewport(containerRef: RefObject<HTMLElement | null>, content
 
   useEffect(() => {
     fit();
-  }, [fit, content.width, content.height]);
+  }, [fit, content.width, content.height, columns]);
 
   return { viewport, fit, reset100, zoomBy, setScale };
 }
