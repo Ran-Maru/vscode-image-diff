@@ -60,6 +60,20 @@ pnpm --filter image-diff build
 
 寸法が違う場合は GitHub と同じく `max(幅) × max(高さ)` のボックスに左上揃えで重ねます。
 
+### スクリーンショット
+
+2-up:
+
+![2-up comparison](docs/screenshots/2-up.webp)
+
+Swipe:
+
+![Swipe comparison](docs/screenshots/swipe.webp)
+
+Onion Skin:
+
+![Onion Skin comparison](docs/screenshots/onion-skin.webp)
+
 ## 既知の制約
 
 - **GIF**: `<img>` で再生するためアニメーションは維持されますが、2 枚のフレーム位置は同期しません。Swipe / Onion Skin では再生位置がずれることがあります。
